@@ -187,7 +187,6 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void enterAddSubtractOperation(ICSSParser.AddSubtractOperationContext ctx) {
-		// Plus en min delen één grammaticaregel; het operatorteken bepaalt welke knoop het wordt.
 		if (ctx.PLUS() != null) {
 			currentContainer.push(new AddOperation());
 		} else {
@@ -220,9 +219,6 @@ public class ASTListener extends ICSSBaseListener {
 		attachToParent(currentContainer.pop());
 	}
 
-	/**
-	 * Voegt een afgeronde knoop toe aan de knoop die nu bovenaan de stack staat (de ouder).
-	 */
 	private void attachToParent(ASTNode child) {
 		currentContainer.peek().addChild(child);
 	}
