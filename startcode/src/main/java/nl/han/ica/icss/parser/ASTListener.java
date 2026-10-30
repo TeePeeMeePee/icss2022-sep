@@ -200,6 +200,26 @@ public class ASTListener extends ICSSBaseListener {
 		attachToParent(currentContainer.pop());
 	}
 
+	@Override
+	public void enterIfClause(ICSSParser.IfClauseContext ctx) {
+		currentContainer.push(new IfClause());
+	}
+
+	@Override
+	public void exitIfClause(ICSSParser.IfClauseContext ctx) {
+		attachToParent(currentContainer.pop());
+	}
+
+	@Override
+	public void enterElseClause(ICSSParser.ElseClauseContext ctx) {
+		currentContainer.push(new ElseClause());
+	}
+
+	@Override
+	public void exitElseClause(ICSSParser.ElseClauseContext ctx) {
+		attachToParent(currentContainer.pop());
+	}
+
 	/**
 	 * Voegt een afgeronde knoop toe aan de knoop die nu bovenaan de stack staat (de ouder).
 	 */

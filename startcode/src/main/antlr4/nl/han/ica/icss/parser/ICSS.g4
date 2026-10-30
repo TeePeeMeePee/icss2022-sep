@@ -47,7 +47,14 @@ ASSIGNMENT_OPERATOR: ':=';
 //--- PARSER: ---
 stylesheet: (variableAssignment | stylerule)* EOF;
 
-stylerule: selector OPEN_BRACE (declaration | variableAssignment)* CLOSE_BRACE;
+stylerule: selector OPEN_BRACE ruleBodyItem* CLOSE_BRACE;
+
+// Alles wat in een stylerule, if-clause of else-clause mag staan.
+ruleBodyItem: declaration | variableAssignment | ifClause;
+
+ifClause: IF BOX_BRACKET_OPEN expression BOX_BRACKET_CLOSE OPEN_BRACE ruleBodyItem* CLOSE_BRACE elseClause?;
+
+elseClause: ELSE OPEN_BRACE ruleBodyItem* CLOSE_BRACE;
 
 selector: LOWER_IDENT   #tagSelector
         | ID_IDENT      #idSelector
@@ -62,6 +69,8 @@ variableAssignment: variableReference ASSIGNMENT_OPERATOR expression SEMICOLON;
 
 variableReference: CAPITAL_IDENT;
 
+// De volgorde van de alternatieven bepaalt de voorrang: vermenigvuldigen gaat voor optellen/aftrekken.
+// Plus en min staan bewust in één alternatief, zodat ze dezelfde voorrang hebben en van links naar rechts worden uitgerekend.
 expression: expression MUL expression          #multiplyOperation
           | expression (PLUS | MIN) expression #addSubtractOperation
           | COLOR                              #colorLiteral
