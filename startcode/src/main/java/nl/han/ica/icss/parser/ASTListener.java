@@ -7,6 +7,10 @@ import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
+import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
@@ -158,6 +162,41 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void exitVariableReference(ICSSParser.VariableReferenceContext ctx) {
+		attachToParent(currentContainer.pop());
+	}
+
+	@Override
+	public void enterScalarLiteral(ICSSParser.ScalarLiteralContext ctx) {
+		currentContainer.push(new ScalarLiteral(ctx.getText()));
+	}
+
+	@Override
+	public void exitScalarLiteral(ICSSParser.ScalarLiteralContext ctx) {
+		attachToParent(currentContainer.pop());
+	}
+
+	@Override
+	public void enterMultiplyOperation(ICSSParser.MultiplyOperationContext ctx) {
+		currentContainer.push(new MultiplyOperation());
+	}
+
+	@Override
+	public void exitMultiplyOperation(ICSSParser.MultiplyOperationContext ctx) {
+		attachToParent(currentContainer.pop());
+	}
+
+	@Override
+	public void enterAddSubtractOperation(ICSSParser.AddSubtractOperationContext ctx) {
+		// Plus en min delen één grammaticaregel; het operatorteken bepaalt welke knoop het wordt.
+		if (ctx.PLUS() != null) {
+			currentContainer.push(new AddOperation());
+		} else {
+			currentContainer.push(new SubtractOperation());
+		}
+	}
+
+	@Override
+	public void exitAddSubtractOperation(ICSSParser.AddSubtractOperationContext ctx) {
 		attachToParent(currentContainer.pop());
 	}
 
